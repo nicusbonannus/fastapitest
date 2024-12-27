@@ -150,7 +150,7 @@ class TestSearchEngine:
         assert result == []
 
     @patch("app.domain.flights_api.FlightsAPI.get_flights")
-    def test_search_journeys_one_combination_with_a_connection_of_more_than_2_hs_available(self, mock_get_flights,
+    def test_search_journeys_one_combination_with_a_connection_of_more_than_4_hs_available(self, mock_get_flights,
                                                                                            flights_with_a_big_connection):
         # given
         mock_get_flights.return_value = flights_with_a_big_connection

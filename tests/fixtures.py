@@ -128,7 +128,7 @@ def flights_with_a_big_connection():
             "flight_number": "XX2234",
             "departure_city": "MDQ",
             "arrival_city": "MAD",
-            "departure_datetime": datetime(2024, 9, 11, 15, 1),
+            "departure_datetime": datetime(2024, 9, 11, 17, 1),
             "arrival_datetime": datetime(2024, 9, 12, 6, 0)
         }
     ]

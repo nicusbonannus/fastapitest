@@ -6,8 +6,8 @@ from app.domain.flights_api import FlightsAPI
 
 
 class FlightSearchEngine:
-    MAX_JOURNEY_TIME_IN_SECONDS = 24 * 60 * 60
-    MAX_CONNECTION_TIME_IN_SECONDS = 2 * 60 * 60
+    MAX_JOURNEY_TIME_IN_SECONDS = 24 * 60 * 60 # 24 hours
+    MAX_CONNECTION_TIME_IN_SECONDS = 4 * 60 * 60 # 4 hours
     def search(self, departure: str, destination: str, date: datetime.date):
         available_flights = FlightsAPI().get_flights(departure, date)
         matched_flights = self._filter_flights(available_flights, departure, destination)
