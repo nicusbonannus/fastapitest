@@ -1,33 +1,48 @@
 from datetime import datetime, timedelta
 
 from fastapi.testclient import TestClient
+from freezegun import freeze_time
+from unittest.mock import patch, ANY
+
 from app.main import app
+from tests.fixtures import two_flights_journey_combination
 
 client = TestClient(app)
 
+
+@freeze_time("2024-09-11")
 class TestGetJourneysAPI:
-    current_date = None
-
-    @classmethod
-    def setup_class(cls):
-        cls.current_date = datetime.now().date()
-
-    def test_get_journeys_happy_path(self):
+    @patch("app.domain.flights_api.FlightsAPI.get_flights")
+    def test_get_journeys_happy_path(self, mock_get_flights, two_flights_journey_combination):
         # given
-        search_parameters = {"departure": "BUE", "destination": "MAD", "date": self.current_date}
+        mock_get_flights.return_value = two_flights_journey_combination
+        search_parameters = {"departure": "BUE", "destination": "MAD", "date": datetime.now().date()}
 
         # when
         response = client.get("/journeys/search", params=search_parameters)
 
         # then
         assert response.status_code == 200
-        assert response.json() == [{"connections": 2, "path": [{"flight_number": "XX1234", "from": "BUE", "to": "MAD",
-        "departure_time": "2024-09-12 00:00", "arrival_time": "2024-09-13 00:00"}]}]
-
+        assert response.json() == [
+            {'connections': 2,
+             'path': [
+                 {
+                     'arrival_time': '2024-09-11T13:00:00',
+                     'departure_time': '2024-09-11T10:00:00',
+                     'flight_number': 'XX1234',
+                     'from': 'BUE',
+                     'to': 'MDQ'},
+                 {
+                     'arrival_time': '2024-09-11T16:00:00',
+                     'departure_time': '2024-09-11T14:00:00',
+                     'flight_number': 'XX2234',
+                     'from': 'MDQ',
+                     'to': 'MAD'}
+             ]}]
 
     def test_get_journeys__departure_with_more_than_3_chars_failed(self):
         # given
-        search_parameters = {"departure": "BUEX", "destination": "MAD", "date": self.current_date}
+        search_parameters = {"departure": "BUEX", "destination": "MAD", "date": datetime.now().date()}
 
         # when
         response = client.get("/journeys/search", params=search_parameters)
@@ -38,10 +53,9 @@ class TestGetJourneysAPI:
         assert 'departure' in error_details['loc']
         assert error_details['msg'] == 'String should have at most 3 characters'
 
-
     def test_get_journeys__destination_with_more_than_3_chars_failed(self):
         # given
-        search_parameters = {"departure": "BUE", "destination": "MADMAX", "date": self.current_date}
+        search_parameters = {"departure": "BUE", "destination": "MADMAX", "date": datetime.now().date()}
 
         # when
         response = client.get("/journeys/search", params=search_parameters)
@@ -52,10 +66,9 @@ class TestGetJourneysAPI:
         assert 'destination' in error_details['loc']
         assert error_details['msg'] == 'String should have at most 3 characters'
 
-
     def test_get_journeys__date_in_the_past_failed(self):
         # given
-        yesterday = self.current_date - timedelta(days=1)
+        yesterday = datetime.now().date() - timedelta(days=1)
         search_parameters = {"departure": "BUE", "destination": "MAD", "date": yesterday}
 
         # when
@@ -65,10 +78,9 @@ class TestGetJourneysAPI:
         assert response.status_code == 422
         assert response.json()['detail'] == 'Date cannot be in the past'
 
-
     def test_get_journeys__departure_field_not_included_failed(self):
         # given
-        search_parameters = {"destination": "MAD", "date": self.current_date}
+        search_parameters = {"destination": "MAD", "date": datetime.now().date()}
 
         # when
         response = client.get("/journeys/search", params=search_parameters)
@@ -76,10 +88,9 @@ class TestGetJourneysAPI:
         # then
         self._check_missing_field_was_validated(expected_field='departure', response=response)
 
-
     def test_get_journeys__destination_field_not_included_failed(self):
         # given
-        search_parameters = {"departure": "MAD", "date": self.current_date}
+        search_parameters = {"departure": "MAD", "date": datetime.now().date()}
 
         # when
         response = client.get("/journeys/search", params=search_parameters)
