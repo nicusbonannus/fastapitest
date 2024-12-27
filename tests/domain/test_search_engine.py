@@ -54,9 +54,23 @@ class TestSearchEngine:
                            ]}]
 
     @patch("app.domain.flights_api.FlightsAPI.get_flights")
-    def test_search_journeys_one_result_that_does_not_match(self, mock_get_flights, one_flight_journey_combination_with_another_destiny):
+    def test_search_journeys_one_destination_that_does_not_match(self, mock_get_flights, one_flight_journey_combination_with_another_destiny):
         # given
         mock_get_flights.return_value = one_flight_journey_combination_with_another_destiny
+        departure = "BUE"
+        destination = "MAD"
+        date = datetime.now().date()
+
+        # when
+        result = FlightSearchEngine().search(departure, destination, date)
+
+        # then
+        assert result == []
+
+    @patch("app.domain.flights_api.FlightsAPI.get_flights")
+    def test_search_journeys_one_origin_that_does_not_match(self, mock_get_flights, one_flight_journey_combination_of_two_flights_with_another_destiny):
+        # given
+        mock_get_flights.return_value = one_flight_journey_combination_of_two_flights_with_another_destiny
         departure = "BUE"
         destination = "MAD"
         date = datetime.now().date()

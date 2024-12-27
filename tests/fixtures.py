@@ -50,6 +50,38 @@ def one_flight_journey_combination_with_another_destiny():
 
 
 @pytest.fixture
+def one_flight_journey_combination_with_another_origin():
+    return [
+        {
+            "flight_number": "XX1234",
+            "departure_city": "MDQ",
+            "arrival_city": "POR",
+            "departure_datetime": datetime(2024, 9, 11, 10, 0),
+            "arrival_datetime": datetime(2024, 9, 11, 23, 0)
+        }
+    ]
+
+@pytest.fixture
+def one_flight_journey_combination_of_two_flights_with_another_destiny():
+    return [
+        {
+            "flight_number": "XX1234",
+            "departure_city": "BUE",
+            "arrival_city": "POR",
+            "departure_datetime": datetime(2024, 9, 11, 10, 0),
+            "arrival_datetime": datetime(2024, 9, 11, 23, 0)
+        },
+
+        {
+            "flight_number": "XX1234",
+            "departure_city": "POR",
+            "arrival_city": "MDQ",
+            "departure_datetime": datetime(2024, 9, 11, 10, 0),
+            "arrival_datetime": datetime(2024, 9, 11, 23, 0)
+        }
+    ]
+
+@pytest.fixture
 def one_flight_for_total_more_than_24_hours():
     return [
         {
