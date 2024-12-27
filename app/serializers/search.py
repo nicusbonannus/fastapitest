@@ -1,4 +1,5 @@
 import datetime
+from typing import List
 
 from fastapi import HTTPException
 from pydantic import BaseModel, Field, field_validator, ValidationError
@@ -16,3 +17,14 @@ class JourneySearchParams(BaseModel):
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                                 detail="Date cannot be in the past")
         return date
+
+class Flight(BaseModel):
+    arrival_time: datetime.datetime
+    departure_time:  datetime.datetime
+    flight_number: str
+    from_: str
+    to: str
+
+class JourneySearchResponse(BaseModel):
+    connections: int
+    path: List[Flight]

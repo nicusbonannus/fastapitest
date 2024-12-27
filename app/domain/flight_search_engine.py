@@ -1,5 +1,6 @@
 from collections import defaultdict
 from datetime import datetime
+from typing import List, Dict
 
 from app.domain.flights_api import FlightsAPI
 
@@ -12,21 +13,21 @@ class FlightSearchEngine:
         matched_flights = self._filter_flights(available_flights, departure, destination)
         return [self._parse_journey(journey) for journey in matched_flights]
 
-    def _is_flight_length_valid(self, flight):
+    def _is_flight_length_valid(self, flight) -> bool:
         journey_length = (flight['arrival_datetime'] - flight['departure_datetime']).total_seconds()
         return journey_length <= self.MAX_JOURNEY_TIME_IN_SECONDS
 
-    def _is_flight_path_length_valid(self, path):
+    def _is_flight_path_length_valid(self, path) -> bool:
         journey_length = (path[-1]['arrival_datetime'] - path[0]['departure_datetime']).total_seconds()
         return journey_length <= self.MAX_JOURNEY_TIME_IN_SECONDS
 
-    def _is_connection_length_valid(self, path):
+    def _is_connection_length_valid(self, path) -> bool:
         if len(path) <= 1:
             return True
         connection_length = (path[-1]['departure_datetime'] - path[-2]['arrival_datetime']).total_seconds()
         return connection_length <= self.MAX_CONNECTION_TIME_IN_SECONDS
 
-    def _filter_flights(self, available_flights, departure, destination, max_connections=2):
+    def _filter_flights(self, available_flights, departure, destination, max_connections=2) -> List[Dict]:
         """
         This method look for combinations of journeys that match with the departure and destination
         NOTE: This method is recursivity to escalate the number of connections in the future as state on the exercise
@@ -34,9 +35,8 @@ class FlightSearchEngine:
         :param departure: Code of the departure airport
         :param destination: Code of the destination airport
         :param max_connections: Optional: amount of connections allowed, 2 by default
-        :return:
+        :return: List[Dict] with the combinations of flights that match with the departure and destination
         """
-
         connections = self._organize_connections(available_flights)
         for flight in connections[departure]:
             if flight["arrival_city"] == destination:
@@ -72,7 +72,7 @@ class FlightSearchEngine:
             "path": [
                 {
                     "flight_number" : flight["flight_number"],
-                    "from": flight["departure_city"],
+                    "from_": flight["departure_city"],
                     "to": flight["arrival_city"],
                     "departure_time": flight["departure_datetime"],
                     "arrival_time": flight["arrival_datetime"]

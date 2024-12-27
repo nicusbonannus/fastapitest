@@ -30,13 +30,13 @@ class TestGetJourneysAPI:
                      'arrival_time': '2024-09-11T13:00:00',
                      'departure_time': '2024-09-11T10:00:00',
                      'flight_number': 'XX1234',
-                     'from': 'BUE',
+                     'from_': 'BUE',
                      'to': 'MDQ'},
                  {
                      'arrival_time': '2024-09-11T16:00:00',
                      'departure_time': '2024-09-11T14:00:00',
                      'flight_number': 'XX2234',
-                     'from': 'MDQ',
+                     'from_': 'MDQ',
                      'to': 'MAD'}
              ]}]
 
