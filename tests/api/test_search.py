@@ -5,17 +5,17 @@ from freezegun import freeze_time
 from unittest.mock import patch, ANY
 
 from app.main import app
-from tests.fixtures import two_flights_journey_combination
+from tests.fixtures import two_trips_journey_combination
 
 client = TestClient(app)
 
 
 @freeze_time("2024-09-11")
 class TestGetJourneysAPI:
-    @patch("app.domain.flights_api.FlightsAPI.get_flights")
-    def test_get_journeys_happy_path(self, mock_get_flights, two_flights_journey_combination):
+    @patch("app.domain.trips_api.TripsAPI.get_trips")
+    def test_get_journeys_happy_path(self, mock_get_trips, two_trips_journey_combination):
         # given
-        mock_get_flights.return_value = two_flights_journey_combination
+        mock_get_trips.return_value = two_trips_journey_combination
         search_parameters = {"departure": "BUE", "destination": "MAD", "date": datetime.now().date()}
 
         # when
@@ -29,13 +29,13 @@ class TestGetJourneysAPI:
                  {
                      'arrival_time': '2024-09-11T13:00:00',
                      'departure_time': '2024-09-11T10:00:00',
-                     'flight_number': 'XX1234',
+                     'trip_number': 'XX1234',
                      'from_': 'BUE',
                      'to': 'MDQ'},
                  {
                      'arrival_time': '2024-09-11T16:00:00',
                      'departure_time': '2024-09-11T14:00:00',
-                     'flight_number': 'XX2234',
+                     'trip_number': 'XX2234',
                      'from_': 'MDQ',
                      'to': 'MAD'}
              ]}]

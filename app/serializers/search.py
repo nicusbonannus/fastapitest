@@ -18,13 +18,13 @@ class JourneySearchParams(BaseModel):
                                 detail="Date cannot be in the past")
         return date
 
-class Flight(BaseModel):
+class Trip(BaseModel):
     arrival_time: datetime.datetime
     departure_time:  datetime.datetime
-    flight_number: str
+    trip_number: str
     from_: str
     to: str
 
 class JourneySearchResponse(BaseModel):
     connections: int
-    path: List[Flight]
+    path: List[Trip]
