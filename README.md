@@ -1,1 +1,1 @@
-Example of FastAPI application
+Example of FastAPI application with the integration of a eXtreme Gradient Boosting model
