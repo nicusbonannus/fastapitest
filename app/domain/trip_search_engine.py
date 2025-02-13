@@ -1,10 +1,26 @@
 from collections import defaultdict
+from dataclasses import dataclass, asdict
 from datetime import datetime
-from tokenize import triple_quoted, StringPrefix
 from typing import List, Dict
+
+import joblib
+import pandas as pd
 
 from app.domain.trips_api import TripsAPI
 
+
+@dataclass
+class JourneyPlan:
+    Duration: float
+    Total_Stops: int
+    Source: int
+    Destination: int
+    Additional_Info: int
+    Dep_Time: float
+    Arrival_Time: float
+    Day: int
+    Month: int
+    Year: int
 
 class TripSearchEngine:
     MAX_JOURNEY_TIME_IN_SECONDS = 24 * 60 * 60 # 24 hours
@@ -14,6 +30,15 @@ class TripSearchEngine:
         matched_trips = self._filter_trips(available_trips, departure, destination)
         return [self._parse_journey(journey) for journey in matched_trips]
 
+    def calculate_price(self,plan: JourneyPlan) -> float:
+        prediction_model = joblib.load("/home/nicus/projects/challenges/flights/app/price_predictor.pkl")
+        input_data = pd.DataFrame([
+            asdict(plan)
+
+        ])
+        output = prediction_model.predict(input_data)
+        price = int(output[0])
+        return price
     def _is_trip_length_valid(self, trip) -> bool:
         journey_length = (trip['arrival_datetime'] - trip['departure_datetime']).total_seconds()
         return journey_length <= self.MAX_JOURNEY_TIME_IN_SECONDS
